@@ -48,6 +48,8 @@ speedrun-<repo-name>/
 
 这是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill。使用方式：
 
+将 .claude/skills/code-speedrun 目录复制到自己项目的 .claude/skills/ 或 ~/.claude/skills/ 中，打开claude
+
 ```
 speedrun this codebase: https://github.com/user/repo
 ```

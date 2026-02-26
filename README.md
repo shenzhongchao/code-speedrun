@@ -48,6 +48,8 @@ speedrun-<repo-name>/
 
 This is a skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). To use it:
 
+copy .claude/skills/code-speedrun to .claude/skills/ in your project dir or to ~/.claude/skills/, and launch claude:
+
 ```
 speedrun this codebase: https://github.com/user/repo
 ```
