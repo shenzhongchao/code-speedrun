@@ -1,0 +1,61 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Unit 1: Overall",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-1-overall/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 2: Data Pipeline",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-data-pipeline/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 3: Input Embedding",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-3-input-embedding/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 4: Pairformer",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-4-pairformer/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 5: Diffusion",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-diffusion/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 6: Confidence",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-6-confidence/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 7: Training",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-7-training/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

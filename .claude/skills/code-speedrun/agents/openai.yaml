@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Speedrun"
+  short_description: "Speedrun codebases — run first, read later"
+  default_prompt: "Use $code-speedrun to break down this codebase into minimal runnable units I can execute and debug. Accepts GitHub URLs or local paths."
