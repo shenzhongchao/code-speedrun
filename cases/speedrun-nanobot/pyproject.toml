@@ -1,0 +1,9 @@
+[project]
+name = "speedrun-nanobot"
+version = "0.1.0"
+description = "Chinese speedrun learning units for HKUDS/nanobot"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+package = false

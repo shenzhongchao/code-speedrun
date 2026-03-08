@@ -1,0 +1,10 @@
+[project]
+name = "speedrun-nanobot-cn"
+version = "0.1.0"
+description = "nanobot 代码拆解学习单元（中文版）"
+requires-python = ">=3.11"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

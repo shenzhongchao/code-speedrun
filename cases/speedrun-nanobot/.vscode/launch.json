@@ -1,0 +1,61 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Unit 1 Overall",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-1-overall/index.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 2 Message Bus",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-message-bus/index.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 3 Context Prompt",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-3-context-prompt/index.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 4 Tool Execution Loop",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-4-tool-execution-loop/index.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 5 Cron Heartbeat",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-cron-heartbeat/index.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 6 Provider Tools",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-6-provider-tools/index.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Unit 1: 全局总览",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-1-overall/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 2: 消息总线",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-message-bus/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 3: 工具系统",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-3-tool-system/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 4: LLM 提供者",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-4-llm-provider/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 5: 上下文与记忆",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-context-memory/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 6: 会话管理",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-6-session/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Unit 7: 定时任务与心跳",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-7-cron-heartbeat/main.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "运行当前文件",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -53,7 +53,7 @@ parent-dir/
 
 Split the codebase into 4–8 units following these rules:
 
-- **Overall-first**: Unit 1 must be an end-to-end overview that runs the complete main flow (e.g., request in → process → response out). Use inline stubs for every subsystem. The learner builds a global mental model before diving into details. Subsequent units zoom into specific areas of this overview.
+- **Overall-first**: Unit 1 must be an end-to-end overview that runs the complete main flow (e.g., request in → process → response out). **Unit 1 imports and calls modules exported by Units 2+**, wiring them into a real orchestration — NOT inline stubs with `print`/`console.log` faking the flow. The learner sees real module boundaries, real imports, and a real dependency graph. Subsequent units zoom into specific areas of this overview.
 - **No standalone infrastructure units**: Config, types, logging, and similar infrastructure do NOT get their own unit. Weave them into the units where they're actually used.
 - **Single concept**: Each unit (2+) teaches one architectural idea (e.g., "message routing", "container isolation", "state persistence") by zooming into a region of the Unit 1 overview.
 - **Independently runnable**: Each unit has its own entry point that can be executed and observed in isolation
@@ -63,9 +63,10 @@ Produce a unit list in this format:
 
 ```
 Unit 1: Overall — [Project Name]
-  Concept:      End-to-end main flow with stubs
+  Concept:      End-to-end main flow — imports and orchestrates modules from Units 2+
   Teaches:      [What the learner will understand after this unit]
   Source files: [Key files from the original codebase]
+  Imports from: Unit 2 (router), Unit 3 (db), Unit 4 (auth), ...
   Runs as:      [How to execute — e.g., "node unit-1-overall/index.ts"]
   Prereqs:      None
 
@@ -73,6 +74,7 @@ Unit 2: [Title]
   Concept:      [One-line description of the core idea]
   Teaches:      [What the learner will understand after this unit]
   Source files: [Key files from the original codebase]
+  Exports:      [What this unit exposes for Unit 1 to import — e.g., "createRouter()"]
   Runs as:      [How to execute — e.g., "node unit-2-<slug>/index.ts"]
   Prereqs:      [Units that must be completed first, or "None"]
 ```
@@ -96,6 +98,8 @@ Coverage:
 If gaps are found, revise the unit list before proceeding to Phase 3.
 
 ### Phase 3: Build Each Learning Unit
+
+**Build order**: Build Units 2+ first, then build Unit 1 last. Each Unit 2+ must export a clean public API (function, class, or object). Unit 1 imports these exports and wires them into the end-to-end flow.
 
 For each unit, create a standalone directory `speedrun-<repo-name>/unit-N-<slug>/` containing (Unit 1 is always `unit-1-overall/`):
 
@@ -159,10 +163,41 @@ Apply simplification checkpoints: no undefined terms, no hand-waving.]
 
 #### 2. Source Code — Minimal Extraction
 
+**Units 2+ — Export a public API**: Each unit must export its core functionality so Unit 1 can import it. The unit's own entry point (e.g., `index.ts`) demonstrates the concept in isolation by calling its own exports with sample data.
+
+**Unit 1 — Import, don't fake**: Unit 1 imports from sibling unit directories using relative paths (e.g., `../unit-2-router/router`). It wires these imports into the end-to-end flow. The learner sees real module boundaries and real data flowing between subsystems.
+
+NEVER do this in Unit 1 (faking the flow with print statements):
+```typescript
+// ❌ WRONG — teaches nothing about real module boundaries
+console.log("→ Routing request to handler...");
+console.log("→ Querying database...");
+console.log("→ Authenticating user...");
+console.log("✓ Response sent");
+```
+
+Do this instead (real imports, real orchestration):
+```typescript
+// ✅ CORRECT — Unit 1 imports and orchestrates real modules
+import { createRouter } from "../unit-2-router/router";
+import { createDB } from "../unit-3-database/db";
+import { authenticate } from "../unit-4-auth/auth";
+
+const db = createDB();
+const router = createRouter();
+
+// LEARN: This is the actual request lifecycle — each step calls
+// a real module that you'll explore in depth in later units.
+const user = authenticate(request);        // → Unit 4 dives deeper
+const handler = router.match(request.path); // → Unit 2 dives deeper
+const data = handler(db);                   // → Unit 3 dives deeper
+```
+
+General rules for all units:
 - Extract only code relevant to this unit's concept
 - Simplify: remove unrelated error handling, feature flags, irrelevant abstractions
 - Add `// LEARN:` comments at key points using the three-layer format from [references/feynman-method.md](references/feynman-method.md): analogy → what → why. Not every comment needs all three layers — use judgment based on complexity.
-- Stub external dependencies with mocks returning realistic data shapes
+- Stub external dependencies (third-party APIs, databases, network calls) with mocks returning realistic data shapes. Stubs are for external boundaries — NOT for inter-unit dependencies.
 
 #### 3. Shared Configuration at `speedrun-<repo-name>/` Level
 

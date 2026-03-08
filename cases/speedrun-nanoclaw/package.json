@@ -1,0 +1,25 @@
+{
+  "name": "speedrun-nanoclaw",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "NanoClaw 代码库拆解学习单元",
+  "scripts": {
+    "unit1": "npx tsx unit-1-overall/index.ts",
+    "unit2": "npx tsx unit-2-whatsapp-channel/index.ts",
+    "unit3": "npx tsx unit-3-sqlite-persistence/index.ts",
+    "unit4": "npx tsx unit-4-container-runner/index.ts",
+    "unit5": "npx tsx unit-5-group-queue/index.ts",
+    "unit6": "npx tsx unit-6-ipc-scheduler/index.ts",
+    "unit7": "npx tsx unit-7-agent-runner/index.ts",
+    "unit8": "npx tsx unit-8-skills-engine/index.ts",
+    "all": "npx tsx unit-1-overall/index.ts && npx tsx unit-2-whatsapp-channel/index.ts && npx tsx unit-3-sqlite-persistence/index.ts && npx tsx unit-4-container-runner/index.ts && npx tsx unit-5-group-queue/index.ts && npx tsx unit-6-ipc-scheduler/index.ts && npx tsx unit-7-agent-runner/index.ts && npx tsx unit-8-skills-engine/index.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "cron-parser": "^5.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.0"
+  }
+}
