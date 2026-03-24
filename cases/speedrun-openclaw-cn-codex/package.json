@@ -1,0 +1,16 @@
+{
+  "name": "speedrun-openclaw-cn",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "unit:1": "node unit-1-overall/index.js",
+    "unit:2": "node unit-2-gateway-entry/index.js",
+    "unit:3": "node unit-3-channel-docking/index.js",
+    "unit:4": "node unit-4-session-routing/index.js",
+    "unit:5": "node unit-5-reply-dispatch/index.js",
+    "all": "node scripts/run-all.js"
+  }
+}

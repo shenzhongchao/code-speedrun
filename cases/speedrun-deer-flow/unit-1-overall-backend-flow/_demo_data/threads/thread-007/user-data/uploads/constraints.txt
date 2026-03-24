@@ -1,0 +1,1 @@
+Scope the speedrun to Python backend. Frontend remains an external boundary.

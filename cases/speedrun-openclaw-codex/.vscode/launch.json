@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Unit 1: Overall",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-1-overall/index.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Unit 2: Gateway Entry",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-gateway-entry/index.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Unit 3: Channel Docking",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-3-channel-docking/index.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Unit 4: Session Routing",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-4-session-routing/index.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Unit 5: Reply Dispatch",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-reply-dispatch/index.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Run Current File",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}

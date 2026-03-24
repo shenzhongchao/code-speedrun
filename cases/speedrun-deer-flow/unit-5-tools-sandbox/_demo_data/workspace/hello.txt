@@ -1,0 +1,1 @@
+sandbox writes a file before the agent reads it

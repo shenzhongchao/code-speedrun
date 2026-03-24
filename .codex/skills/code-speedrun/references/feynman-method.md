@@ -2,6 +2,8 @@
 
 Apply the Feynman learning technique when writing unit explanations, `// LEARN:` comments, and README walkthroughs. The core loop: explain simply → find gaps → simplify further.
 
+For `code-speedrun`, treat `// LEARN:` comments as part of the teaching surface, not optional decoration. The README explains the tour; the code comments explain the tricky turns.
+
 ## 1. Plain-Language-First Rule
 
 Every concept explanation must start with a sentence a non-specialist can understand. Technical precision comes second.
@@ -94,3 +96,16 @@ Not every `// LEARN:` comment needs all three layers. Use judgment:
 - Simple lines: analogy + what (2 layers)
 - Critical design decisions: all 3 layers
 - Obvious code: skip the comment entirely
+
+## 6. Placement Guidance
+
+Place `// LEARN:` comments at the points where a learner is most likely to ask "why is this here?" or "what just changed?" Typical high-value placements:
+
+- Entry-point orchestration steps
+- Boundary crossings between units or subsystems
+- State initialization or mutation that later code depends on
+- Error handling that changes control flow
+- Tool selection, dependency injection, or dynamic dispatch
+- Security or isolation checks
+
+Do not comment every line. Do comment the handful of places where understanding would otherwise require jumping back to the README or the original repo.

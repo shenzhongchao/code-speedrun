@@ -1,5 +1,13 @@
 # Debug Guide Template
 
+## Contents
+
+- Observation Points
+- Common Failures
+- State Inspection
+- Isolation Testing
+- VS Code `launch.json` Template
+
 Use this template for the "Debug Guide" section in each learning unit's README.md. Adapt to the unit's language and runtime.
 
 ## Structure
@@ -107,19 +115,38 @@ export LOG_LEVEL=trace
 node --inspect-brk index.ts
 ```
 
-## VS Code launch.json Template
+## VS Code `launch.json` Template
 
 ```json
 {
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Unit N",
+      "name": "Unit 1: Overall",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/index.ts",
+      "program": "${workspaceFolder}/unit-1-overall/index.ts",
       "runtimeArgs": ["-r", "ts-node/register"],
       "env": { "DEBUG": "1" },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Unit 2: Router",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-router/index.ts",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "env": { "DEBUG": "1" },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Run Current File",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}",
+      "runtimeArgs": ["-r", "ts-node/register"],
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]
     }
@@ -134,10 +161,18 @@ For Python units:
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Unit N",
+      "name": "Unit 1: Overall",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/main.py",
+      "program": "${workspaceFolder}/unit-1-overall/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
       "console": "integratedTerminal",
       "justMyCode": true
     }
@@ -145,4 +180,4 @@ For Python units:
 }
 ```
 
-Adapt the template to the actual language and toolchain of the codebase being decomposed.
+Keep this file at the speedrun root so one workspace can debug every unit. Adapt the template to the actual runtime and toolchain of the codebase being decomposed.

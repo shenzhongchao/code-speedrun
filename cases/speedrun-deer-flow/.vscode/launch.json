@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Unit 1: Overall Backend Flow",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-1-overall-backend-flow/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 2: Gateway and Config",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-gateway-config/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 3: Thread Runtime",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-3-thread-runtime/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 4: Lead Agent Factory",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-4-lead-agent-factory/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 5: Tools and Sandbox",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-tools-sandbox/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}
