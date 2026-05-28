@@ -1,5 +1,9 @@
 # Code Speedrun
 
+> Everything to Nano
+
+Turn complex codebases into minimal, runnable learning units. Here, "Nano" means the smallest unit you can run, inspect, and actually understand.
+
 An AI skill that decomposes any codebase into minimal, independently runnable units — so you can understand a project by running it, not reading it.
 
 ## Why

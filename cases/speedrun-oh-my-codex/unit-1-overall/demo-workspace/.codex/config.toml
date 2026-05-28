@@ -1,0 +1,12 @@
+# oh-my-codex managed config
+notify = ["node", ".omx/hooks/notify-hook.js"]
+model_reasoning_effort = "high"
+model = "gpt-5.4"
+
+[features]
+multi_agent = true
+child_agents_md = true
+codex_hooks = true
+
+[env]
+USE_OMX_EXPLORE_CMD = "1"

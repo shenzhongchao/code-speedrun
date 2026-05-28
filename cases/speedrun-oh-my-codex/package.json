@@ -1,0 +1,17 @@
+{
+  "name": "speedrun-oh-my-codex",
+  "private": true,
+  "type": "module",
+  "description": "Runnable learning units for the oh-my-codex codebase",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "unit:1": "node unit-1-overall/index.js",
+    "unit:2": "node unit-2-command-router/index.js",
+    "unit:3": "node unit-3-setup-config/index.js",
+    "unit:4": "node unit-4-overlay-routing/index.js",
+    "unit:5": "node unit-5-team-runtime/index.js",
+    "unit:6": "node unit-6-native-boundaries/index.js"
+  }
+}

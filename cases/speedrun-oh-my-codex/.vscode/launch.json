@@ -1,0 +1,82 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Unit 1: OMX End-to-End",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-1-overall/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Unit 2: Command Router",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-2-command-router/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Unit 3: Setup & Config",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-3-setup-config/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Unit 4: Overlay & Keyword Routing",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-4-overlay-routing/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Unit 5: Team Runtime",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-team-runtime/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Unit 6: Native Boundaries",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-6-native-boundaries/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Run Current File",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}

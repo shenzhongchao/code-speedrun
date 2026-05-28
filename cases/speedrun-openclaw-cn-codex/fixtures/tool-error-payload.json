@@ -1,0 +1,9 @@
+{
+  "runId": "tool-error-1",
+  "payloads": [
+    {
+      "type": "error",
+      "text": "calendar.create failed: provider unavailable"
+    }
+  ]
+}

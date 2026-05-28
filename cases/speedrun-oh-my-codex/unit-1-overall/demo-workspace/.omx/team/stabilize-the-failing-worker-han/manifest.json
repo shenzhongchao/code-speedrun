@@ -1,0 +1,7 @@
+{
+  "team_name": "stabilize-the-failing-worker-han",
+  "requested_task": "stabilize the failing worker handoff",
+  "requested_workers": 3,
+  "agent_type": "executor",
+  "state_root": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-1-overall/demo-workspace/.omx/team/stabilize-the-failing-worker-han"
+}

@@ -18,26 +18,34 @@
       "skipFiles": ["<node_internals>/**"]
     },
     {
-      "name": "Unit 3: Channel Docking",
+      "name": "Unit 3: Session Context",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/unit-3-channel-docking/index.js",
+      "program": "${workspaceFolder}/unit-3-session-context/index.js",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]
     },
     {
-      "name": "Unit 4: Session Routing",
+      "name": "Unit 4: Agent Loop",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/unit-4-session-routing/index.js",
+      "program": "${workspaceFolder}/unit-4-agent-loop/index.js",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]
     },
     {
-      "name": "Unit 5: Reply Dispatch",
+      "name": "Unit 5: Tools Safety",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/unit-5-reply-dispatch/index.js",
+      "program": "${workspaceFolder}/unit-5-tools-safety/index.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Unit 6: Reply Delivery",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-6-reply-delivery/index.js",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]
     },

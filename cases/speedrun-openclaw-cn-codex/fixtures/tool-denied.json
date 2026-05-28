@@ -1,0 +1,7 @@
+{
+  "toolName": "exec.host",
+  "policy": {
+    "decision": "deny",
+    "reason": "sandboxed sessions cannot use host exec"
+  }
+}

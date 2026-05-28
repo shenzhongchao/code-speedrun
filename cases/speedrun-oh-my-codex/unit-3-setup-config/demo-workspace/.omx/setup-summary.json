@@ -1,0 +1,13 @@
+{
+  "scope": "project",
+  "model": "gpt-5.4",
+  "written": [
+    ".codex/config.toml",
+    ".codex/prompts/planner.md",
+    ".codex/prompts/team-executor.md",
+    ".codex/skills/team/SKILL.md",
+    ".codex/skills/ralph/SKILL.md",
+    ".omx/hooks/notify-hook.js",
+    "AGENTS.md"
+  ]
+}

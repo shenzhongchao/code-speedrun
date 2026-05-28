@@ -1,0 +1,14 @@
+[
+  {
+    "name": "calendar",
+    "description": "创建提醒",
+    "requires": []
+  },
+  {
+    "name": "deploy",
+    "description": "读取部署状态",
+    "requires": [
+      "git"
+    ]
+  }
+]

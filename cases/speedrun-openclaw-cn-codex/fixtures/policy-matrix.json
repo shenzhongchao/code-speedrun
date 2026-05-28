@@ -1,0 +1,14 @@
+[
+  {
+    "toolName": "exec.host",
+    "sandboxMode": "all",
+    "decision": "deny",
+    "reason": "sandboxed sessions cannot use host exec"
+  },
+  {
+    "toolName": "calendar.create",
+    "channel": "telegram",
+    "decision": "ask",
+    "reason": "calendar changes require approval from channel messages"
+  }
+]

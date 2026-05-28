@@ -1,0 +1,29 @@
+[
+  {
+    "name": "worker-1",
+    "worktreePath": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-5-team-runtime/demo-workspace/.omx/team/stabilize-the-failing-worker-han/worktrees/worker-1",
+    "inboxPath": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-5-team-runtime/demo-workspace/.omx/team/stabilize-the-failing-worker-han/inbox/worker-1.md",
+    "assignedTasks": [
+      "1"
+    ],
+    "teamName": "stabilize-the-failing-worker-han"
+  },
+  {
+    "name": "worker-2",
+    "worktreePath": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-5-team-runtime/demo-workspace/.omx/team/stabilize-the-failing-worker-han/worktrees/worker-2",
+    "inboxPath": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-5-team-runtime/demo-workspace/.omx/team/stabilize-the-failing-worker-han/inbox/worker-2.md",
+    "assignedTasks": [
+      "2"
+    ],
+    "teamName": "stabilize-the-failing-worker-han"
+  },
+  {
+    "name": "worker-3",
+    "worktreePath": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-5-team-runtime/demo-workspace/.omx/team/stabilize-the-failing-worker-han/worktrees/worker-3",
+    "inboxPath": "/root/key_projects/learn-codebase/speedrun-oh-my-codex/unit-5-team-runtime/demo-workspace/.omx/team/stabilize-the-failing-worker-han/inbox/worker-3.md",
+    "assignedTasks": [
+      "3"
+    ],
+    "teamName": "stabilize-the-failing-worker-han"
+  }
+]

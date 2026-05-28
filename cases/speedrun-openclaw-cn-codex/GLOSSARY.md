@@ -1,0 +1,23 @@
+# Glossary
+
+- `agent run`: 一次从用户输入到 agent payload 的执行。
+- `Gateway`: 本地控制平面入口，负责连接、规范化、发布事件，不替 agent 思考。
+- `control plane`: 操作端和节点调用 Gateway 的协议层。
+- `channel`: Telegram、Slack、WebChat 等用户消息来源。
+- `envelope`: Gateway 输出的统一请求对象，包含 `runId`、`sessionKey`、`source` 等字段。
+- `session key`: 选择 agent、渠道和会话隔离范围的字符串。
+- `agent scope`: 由 session key 解析出的 agent、workspace、memory root、session store。
+- `workspace`: agent 可见的本地工作区。
+- `bootstrap files`: `AGENTS.md`、`SOUL.md`、`USER.md`、`MEMORY.md` 等稳定上下文文件。
+- `memory recall`: 按当前 query 召回的长期记忆片段。
+- `system prompt`: 汇总身份、工作区、技能、记忆和运行时信息的系统提示。
+- `skill`: 以 `SKILL.md` 描述的可发现能力。
+- `hook`: 工具调用前后的扩展点，可审计、改写或阻止调用。
+- `tool policy`: allow/ask/deny 决策矩阵。
+- `sandbox`: 工具执行的文件系统和主机能力边界。
+- `lifecycle stream`: `accepted/queued/start/end/error/timeout` 等运行状态事件。
+- `assistant stream`: assistant delta 和最终文本相关事件。
+- `tool stream`: tool start/end/error 事件。
+- `payload`: agent loop 产出的投递候选内容。
+- `reply delivery`: 将 payload 整形、去重、按渠道发送的出口边界。
+- `idempotency`: 同一个请求 key 只投递一次，避免重复消息。

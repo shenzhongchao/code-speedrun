@@ -1,0 +1,9 @@
+{
+  "channel": "telegram",
+  "account": "personal",
+  "messageId": "42",
+  "sender": "@teal-user",
+  "chatId": "@teal-user",
+  "chatType": "direct",
+  "text": "明早提醒我看部署状态"
+}

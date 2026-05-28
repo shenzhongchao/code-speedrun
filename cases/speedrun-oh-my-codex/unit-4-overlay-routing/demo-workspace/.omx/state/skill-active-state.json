@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "active": true,
+  "skill": "team",
+  "keyword": "$team",
+  "phase": "executing",
+  "activated_at": "2026-04-07T03:16:22.370Z",
+  "updated_at": "2026-04-07T03:16:22.370Z",
+  "session_id": "demo-session"
+}

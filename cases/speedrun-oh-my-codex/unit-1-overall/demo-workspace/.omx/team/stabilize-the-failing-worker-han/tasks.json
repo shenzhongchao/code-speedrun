@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "subject": "Clarify the task and break it into chunks",
+    "ownerRole": "planner",
+    "status": "completed"
+  },
+  {
+    "id": "2",
+    "subject": "stabilize the failing worker handoff",
+    "ownerRole": "executor",
+    "status": "in_progress"
+  },
+  {
+    "id": "3",
+    "subject": "Verify the change and collect evidence",
+    "ownerRole": "verifier",
+    "status": "pending"
+  }
+]

@@ -2,9 +2,10 @@ import { spawnSync } from "node:child_process";
 
 const unitPrograms = [
   "unit-2-gateway-entry/index.js",
-  "unit-3-channel-docking/index.js",
-  "unit-4-session-routing/index.js",
-  "unit-5-reply-dispatch/index.js",
+  "unit-3-session-context/index.js",
+  "unit-4-agent-loop/index.js",
+  "unit-5-tools-safety/index.js",
+  "unit-6-reply-delivery/index.js",
   "unit-1-overall/index.js"
 ];
 

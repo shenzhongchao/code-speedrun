@@ -1,0 +1,4 @@
+{
+  "runId": "tg-42",
+  "idempotencyKey": "telegram:personal:42"
+}

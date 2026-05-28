@@ -1,0 +1,22 @@
+{
+  "active": true,
+  "phase": "team-exec",
+  "task_description": "stabilize the failing worker handoff",
+  "created_at": "2026-04-07T03:16:22.407Z",
+  "phase_transitions": [
+    {
+      "from": "team-plan",
+      "to": "team-prd",
+      "at": "2026-04-07T03:16:22.408Z",
+      "reason": "launch approved"
+    },
+    {
+      "from": "team-prd",
+      "to": "team-exec",
+      "at": "2026-04-07T03:16:22.408Z",
+      "reason": "workers received tasks"
+    }
+  ],
+  "max_fix_attempts": 2,
+  "current_fix_attempt": 0
+}

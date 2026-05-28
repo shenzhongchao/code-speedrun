@@ -1,0 +1,9 @@
+{
+  "runId": "long-1",
+  "payloads": [
+    {
+      "type": "text",
+      "text": "这是一个用于 chunking 实验的长回复。它应该被 reply delivery 按渠道长度限制拆分，而不是回到 agent loop 重新生成。"
+    }
+  ]
+}
