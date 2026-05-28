@@ -29,7 +29,8 @@ class DemoLeadAgent:
         # Orchestration hands it runtime state up front, which keeps tool execution predictable.
         workspace_path = Path(self._runtime_value(runtime, "workspace_path"))
         workspace_path.mkdir(parents=True, exist_ok=True)
-        brief_path = workspace_path / "brief.md"
+        virtual_workspace_path = self._runtime_value(runtime, "virtual_workspace_path", default=str(workspace_path))
+        brief_path = f"{virtual_workspace_path}/brief.md"
 
         brief_lines = [
             "# DeerFlow Speedrun Brief",
@@ -46,7 +47,7 @@ class DemoLeadAgent:
         # to start real work inside the sandbox.
         sandbox.write_file(str(brief_path), "\n".join(brief_lines))
         brief_preview = sandbox.read_file(str(brief_path))
-        directory_listing = sandbox.execute_command(f"ls -1 {workspace_path}")
+        directory_listing = sandbox.execute_command(f"ls -1 {virtual_workspace_path}")
 
         return {
             "model_name": self.blueprint["model_name"],
@@ -56,7 +57,7 @@ class DemoLeadAgent:
             "tool_trace": [
                 {"tool": "write_file", "target": str(brief_path)},
                 {"tool": "read_file", "preview": brief_preview.splitlines()[:4]},
-                {"tool": "bash", "command": f"ls -1 {workspace_path}", "output": directory_listing},
+                {"tool": "bash", "command": f"ls -1 {virtual_workspace_path}", "output": directory_listing},
             ],
             "final_message": (
                 "The lead agent now has the thread paths, uploaded file metadata, and a safe sandbox. "
@@ -65,12 +66,17 @@ class DemoLeadAgent:
         }
 
     @staticmethod
-    def _runtime_value(runtime: object, key: str) -> object:
+    def _runtime_value(runtime: object, key: str, default: object | None = None) -> object:
         # LEARN: Accept either an object-style runtime or a dict-style runtime.
         # The teaching point is the contract ("you must provide workspace_path"), not the container type.
         if hasattr(runtime, key):
             return getattr(runtime, key)
-        return runtime[key]
+        try:
+            return runtime[key]
+        except KeyError:
+            if default is not None:
+                return default
+            raise
 
 
 class LeadAgentFactory:

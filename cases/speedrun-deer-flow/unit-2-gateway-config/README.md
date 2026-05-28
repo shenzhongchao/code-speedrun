@@ -26,6 +26,8 @@
 1. 从配置里列出模型清单
 2. 接收上传文件，为每个文件生成物理路径、虚拟路径和 artifact URL
 
+这里的虚拟路径不是随便拼字符串。它和 `Unit 3` 的 `VirtualPathMapper` 使用同一个约定：host 侧 `.../user-data/uploads/foo.txt` 对应 agent 侧 `/mnt/user-data/uploads/foo.txt`。
+
 这正好对应原仓库里的 `models` router 和 `uploads` router。学会这两个动作，你就能明白：为什么 DeerFlow 前端不是直接和 agent“硬聊”，而是先靠 gateway 打通很多普通后端能力。
 
 ## Key Code Walkthrough
@@ -39,7 +41,7 @@
 ## How to Run
 
 ```bash
-cd src/speedrun-deer-flow
+cd cases/speedrun-deer-flow
 python unit-2-gateway-config/main.py
 ```
 
@@ -50,6 +52,7 @@ python unit-2-gateway-config/main.py
 - `health.status` 是 `healthy`
 - `models.models` 有 3 个模型
 - `uploads.files` 有 2 个文件
+- 每个上传文件都有 `/mnt/user-data/uploads/...` 形式的 `virtual_path`
 - `roadmap.docx` 会额外生成 `roadmap.md`
 
 ## Exercises

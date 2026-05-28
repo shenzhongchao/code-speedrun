@@ -34,12 +34,22 @@
       "justMyCode": true
     },
     {
-      "name": "Unit 5: Tools and Sandbox",
+      "name": "Unit 5: LangGraph Tools and Docker Sandbox",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/unit-5-tools-sandbox/main.py",
       "console": "integratedTerminal",
       "justMyCode": true
+    },
+    {
+      "name": "Unit 5: Live LLM + Docker Sandbox",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-5-tools-sandbox/main.py",
+      "args": ["--live"],
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
     },
     {
       "name": "Run Current File",

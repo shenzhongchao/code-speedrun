@@ -15,13 +15,13 @@ DeerFlow 是一个开源的 **super agent harness**。简单说，它不是单�
 
 ## What This Speedrun Covers
 
-这个 speedrun 明确只覆盖 DeerFlow 的 **Python backend 主干**，不覆盖 Next.js 前端。原因很直接：原仓库是 Python + Node.js 的 monorepo，而 `Unit 1` 必须真实 import 其它单元。跨运行时去拼“总装脚本”会变成人造讲解，不利于把主链路跑通。这里保留的主链路是：**Gateway API 收到请求 -> Thread Runtime 分配线程目录和 sandbox -> Lead Agent Factory 解析运行时参数 -> Tool Registry 选出可用工具 -> Local Sandbox 执行命令和文件读写**。
+这个 speedrun 明确只覆盖 DeerFlow 的 **Python backend 主干**，不覆盖 Next.js 前端。原因很直接：原仓库是 Python + Node.js 的 monorepo，而 `Unit 1` 必须真实 import 其它单元。跨运行时去拼“总装脚本”会变成人造讲解，不利于把主链路跑通。这里保留的主链路是：**Gateway API 收到请求 -> Thread Runtime 分配线程目录和 `/mnt/user-data` 虚拟路径 -> Lead Agent Factory 解析运行时参数 -> Tool Registry 选出可用工具 -> LangGraph agent 把工具调用派发到 Docker-style sandbox**。
 
 覆盖情况：
 
 - 直接覆盖：`backend/app/gateway/`、`backend/packages/harness/deerflow/agents/`、`backend/packages/harness/deerflow/tools/`、`backend/packages/harness/deerflow/sandbox/`
 - 织入讲解：memory、skills prompt、subagents、uploads conversion、tool search
-- 明确排除：`frontend/`、`docker/`、`skills/`、IM channels、测试与 CI
+- 明确排除：`frontend/`、生产级 Docker/provisioner 编排、`skills/`、IM channels、测试与 CI
 
 ## Quick Start
 
@@ -46,16 +46,16 @@ python unit-5-tools-sandbox/main.py
 |------|-------|-------|---------|
 | 1 | Overall Backend Flow | *One request, five moving parts* | End-to-end backend main flow that imports and orchestrates Units 2-5 |
 | 2 | Gateway and Config | *HTTP is the front desk* | FastAPI-style boundary for config-backed APIs and uploads |
-| 3 | Thread Runtime | *Each thread gets its own backpack* | Per-thread paths and sandbox assignment through middleware |
+| 3 | Thread Runtime | *Each thread gets its own backpack* | Per-thread host paths, `/mnt/user-data` virtual paths, and sandbox assignment |
 | 4 | Lead Agent Factory | *Assemble, do not hardcode* | Resolve runtime flags into model, middleware, prompt, and tools |
-| 5 | Tools and Sandbox | *Tools need safe hands* | Tool registry plus local sandbox command and file execution |
+| 5 | LangGraph Tools and Docker Sandbox | *The graph thinks, the sandbox touches files* | Minimal LangGraph agent loop with OpenAI-compatible LLM wiring and Docker sandbox execution |
 
 ## Architecture At A Glance
 
 - `Unit 2` 解释为什么 DeerFlow 把“模型列表、文件上传”做成 Gateway API，而不是塞进 LangGraph。
-- `Unit 3` 解释 thread id 如何变成 `workspace / uploads / outputs` 三个路径，再挂上 `sandbox_id`。
+- `Unit 3` 解释 thread id 如何变成 host `workspace / uploads / outputs` 和 agent 可见的 `/mnt/user-data/...`，再挂上 `sandbox_id`。
 - `Unit 4` 解释 `make_lead_agent()` 的真正价值：不是“多写几个 if”，而是把运行时参数翻译成模型、中间件和工具选择。
-- `Unit 5` 解释工具来源和本地 sandbox 的最小执行面。
+- `Unit 5` 解释工具来源、LangGraph tool-call 循环，以及 OpenAI-compatible LLM 如何把 `/mnt/user-data/...` 任务交给 Docker sandbox。
 - `Unit 1` 用真实 import 把前四个单元串起来，模拟一次后端请求。
 
 ## Debugging
@@ -66,7 +66,7 @@ python unit-5-tools-sandbox/main.py
 - `Unit 2: Gateway and Config`
 - `Unit 3: Thread Runtime`
 - `Unit 4: Lead Agent Factory`
-- `Unit 5: Tools and Sandbox`
+- `Unit 5: LangGraph Tools and Docker Sandbox`
 - `Run Current File`
 
 调试顺序建议先跑 `Unit 1`，再遇到不懂的地方跳到对应子单元。这样你会先看到完整链路，再拆开每一块。

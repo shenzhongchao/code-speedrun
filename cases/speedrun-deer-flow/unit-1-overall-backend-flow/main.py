@@ -18,7 +18,13 @@ sys.path.insert(0, str(ROOT_DIR / "unit-5-tools-sandbox"))
 from gateway_config_demo import GatewayAPI, UploadedFile, build_demo_config  # noqa: E402
 from lead_agent_factory_demo import LeadAgentFactory, RuntimeFlags  # noqa: E402
 from thread_runtime_demo import ThreadRuntimeManager  # noqa: E402
-from tools_sandbox_demo import LocalSandbox, build_tool_registry  # noqa: E402
+from tools_sandbox_demo import (  # noqa: E402
+    CompletedSandboxProcess,
+    DockerSandbox,
+    ScriptedToolCallingModel,
+    build_tool_registry,
+    run_langgraph_sandbox_demo,
+)
 
 
 def run_demo() -> dict[str, object]:
@@ -76,7 +82,24 @@ def run_demo() -> dict[str, object]:
         available_tools=available_tools,
     )
 
-    sandbox = LocalSandbox("local")
+    def fake_docker_runner(command: list[str], **kwargs: object) -> CompletedSandboxProcess:
+        # LEARN: Unit 1 proves the virtual path contract without requiring Docker.
+        # Unit 5 owns the real Docker execution path; this top-level flow only needs to show
+        # that the same /mnt/user-data path can be mounted, written, and inspected.
+        shell_command = command[-1]
+        if shell_command == "ls -1 /mnt/user-data/workspace":
+            names = sorted(path.name for path in Path(thread_runtime.workspace_path).iterdir())
+            return CompletedSandboxProcess(stdout="\n".join(names) + "\n", stderr="", returncode=0)
+        output_path = Path(thread_runtime.outputs_path) / "langgraph-result.txt"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text("LANGGRAPH_SANDBOX_OK\n", encoding="utf-8")
+        return CompletedSandboxProcess(stdout="LANGGRAPH_SANDBOX_OK\n", stderr="", returncode=0)
+
+    sandbox = DockerSandbox(
+        "docker-thread-007",
+        user_data_root=thread_runtime.user_data_path,
+        runner=fake_docker_runner,
+    )
     # LEARN: The lead agent receives prepared runtime state plus uploaded file metadata.
     # That is the key idea of DeerFlow's backend: orchestration prepares the stage first,
     # then tool execution happens inside a controlled sandbox.
@@ -87,6 +110,25 @@ def run_demo() -> dict[str, object]:
         sandbox=sandbox,
     )
 
+    graph_outcome = run_langgraph_sandbox_demo(
+        prompt="Write a final marker into /mnt/user-data/outputs/langgraph-result.txt.",
+        sandbox=sandbox,
+        model=ScriptedToolCallingModel(
+            tool_name="bash",
+            tool_args={
+                "command": (
+                    "printf 'LANGGRAPH_SANDBOX_OK\\n' "
+                    "> /mnt/user-data/outputs/langgraph-result.txt && "
+                    "cat /mnt/user-data/outputs/langgraph-result.txt"
+                )
+            },
+            final_text="LANGGRAPH_SANDBOX_OK",
+        ),
+    )
+
+    output_virtual_path = f"{thread_runtime.virtual_outputs_path}/langgraph-result.txt"
+    output_host_path = thread_runtime.mapper().virtual_to_host(output_virtual_path)
+
     return {
         "health": gateway.get_health(),
         "models_seen_by_gateway": models["models"],
@@ -95,10 +137,21 @@ def run_demo() -> dict[str, object]:
             "workspace_path": thread_runtime.workspace_path,
             "uploads_path": thread_runtime.uploads_path,
             "outputs_path": thread_runtime.outputs_path,
+            "user_data_path": thread_runtime.user_data_path,
+            "virtual_workspace_path": thread_runtime.virtual_workspace_path,
+            "virtual_uploads_path": thread_runtime.virtual_uploads_path,
+            "virtual_outputs_path": thread_runtime.virtual_outputs_path,
             "sandbox_id": thread_runtime.sandbox_id,
         },
         "uploaded_files": uploads["files"],
         "lead_agent": outcome,
+        "virtual_path_flow": {
+            "mount": f"{thread_runtime.user_data_path}:/mnt/user-data",
+            "output_virtual_path": output_virtual_path,
+            "output_host_path": str(output_host_path),
+            "host_output_exists": output_host_path.exists(),
+            "langgraph_agent": graph_outcome,
+        },
     }
 
 

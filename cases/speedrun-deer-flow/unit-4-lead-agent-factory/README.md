@@ -41,7 +41,7 @@ DeerFlow 的 lead agent 不是“选一个模型然后直接开跑”。它更�
 ## How to Run
 
 ```bash
-cd src/speedrun-deer-flow
+cd cases/speedrun-deer-flow
 python unit-4-lead-agent-factory/main.py
 ```
 

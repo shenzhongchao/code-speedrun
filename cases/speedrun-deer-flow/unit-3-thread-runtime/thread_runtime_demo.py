@@ -5,13 +5,54 @@ from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
 
+VIRTUAL_USER_DATA_ROOT = "/mnt/user-data"
+
+
+class VirtualPathMapper:
+    """Map DeerFlow-style virtual paths to one thread's host user-data directory."""
+
+    def __init__(self, user_data_path: str | Path):
+        self.user_data_path = Path(user_data_path)
+
+    def virtual_to_host(self, virtual_path: str) -> Path:
+        normalized = virtual_path.replace("\\", "/")
+        if normalized == VIRTUAL_USER_DATA_ROOT:
+            return self.user_data_path
+        if not normalized.startswith(f"{VIRTUAL_USER_DATA_ROOT}/"):
+            raise ValueError(f"Path must start with {VIRTUAL_USER_DATA_ROOT}: {virtual_path}")
+        relative = normalized[len(VIRTUAL_USER_DATA_ROOT) :].lstrip("/")
+        relative_path = Path(relative)
+        if ".." in relative_path.parts:
+            raise ValueError("Virtual paths may not contain '..'")
+        return self.user_data_path / relative_path
+
+    def host_to_virtual(self, host_path: str | Path) -> str:
+        host = Path(host_path)
+        try:
+            relative = host.relative_to(self.user_data_path)
+        except ValueError as exc:
+            raise ValueError(f"Host path is outside user-data root: {host}") from exc
+        if ".." in relative.parts:
+            raise ValueError("Host paths may not escape user-data root")
+        suffix = relative.as_posix()
+        return VIRTUAL_USER_DATA_ROOT if suffix == "." else f"{VIRTUAL_USER_DATA_ROOT}/{suffix}"
+
+
 @dataclass
 class ThreadRuntime:
     thread_id: str
+    user_data_path: str
     workspace_path: str
     uploads_path: str
     outputs_path: str
+    virtual_user_data_path: str = VIRTUAL_USER_DATA_ROOT
+    virtual_workspace_path: str = f"{VIRTUAL_USER_DATA_ROOT}/workspace"
+    virtual_uploads_path: str = f"{VIRTUAL_USER_DATA_ROOT}/uploads"
+    virtual_outputs_path: str = f"{VIRTUAL_USER_DATA_ROOT}/outputs"
     sandbox_id: str | None = None
+
+    def mapper(self) -> VirtualPathMapper:
+        return VirtualPathMapper(self.user_data_path)
 
 
 class ThreadRuntimeManager:
@@ -36,6 +77,7 @@ class ThreadRuntimeManager:
         thread_root = self.base_dir / "threads" / thread_id / "user-data"
         return ThreadRuntime(
             thread_id=thread_id,
+            user_data_path=str(thread_root),
             workspace_path=str(thread_root / "workspace"),
             uploads_path=str(thread_root / "uploads"),
             outputs_path=str(thread_root / "outputs"),

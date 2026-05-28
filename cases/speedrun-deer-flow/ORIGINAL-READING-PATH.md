@@ -21,7 +21,9 @@
 9. `backend/packages/harness/deerflow/agents/lead_agent/prompt.py`
 10. `backend/packages/harness/deerflow/tools/tools.py`
 11. `backend/packages/harness/deerflow/tools/builtins/__init__.py`
-12. `backend/packages/harness/deerflow/sandbox/local/local_sandbox.py`
+12. `backend/packages/harness/deerflow/models/factory.py`
+13. `backend/packages/harness/deerflow/sandbox/local/local_sandbox.py`
+14. `backend/packages/harness/deerflow/community/aio_sandbox/`
 
 ## Unit Crosswalk
 
@@ -29,7 +31,7 @@
 
 教学版入口：
 
-- `src/speedrun-deer-flow/unit-1-overall-backend-flow/main.py`
+- `cases/speedrun-deer-flow/unit-1-overall-backend-flow/main.py`
 
 对应原仓主线：
 
@@ -56,7 +58,7 @@
 
 教学版入口：
 
-- `src/speedrun-deer-flow/unit-2-gateway-config/gateway_config_demo.py`
+- `cases/speedrun-deer-flow/unit-2-gateway-config/gateway_config_demo.py`
 
 对应原仓文件：
 
@@ -90,7 +92,7 @@ speedrun 保留的概念：
 
 教学版入口：
 
-- `src/speedrun-deer-flow/unit-3-thread-runtime/thread_runtime_demo.py`
+- `cases/speedrun-deer-flow/unit-3-thread-runtime/thread_runtime_demo.py`
 
 对应原仓文件：
 
@@ -125,7 +127,7 @@ speedrun 保留的概念：
 
 教学版入口：
 
-- `src/speedrun-deer-flow/unit-4-lead-agent-factory/lead_agent_factory_demo.py`
+- `cases/speedrun-deer-flow/unit-4-lead-agent-factory/lead_agent_factory_demo.py`
 
 对应原仓文件：
 
@@ -154,15 +156,19 @@ speedrun 保留的概念：
 2. `agents/lead_agent/prompt.py`
 3. `agents/middlewares/` 下的 `todo`、`memory`、`clarification`、`view_image`
 
-### Unit 5: Tools and Sandbox
+### Unit 5: LangGraph Tools and Docker Sandbox
 
 教学版入口：
 
-- `src/speedrun-deer-flow/unit-5-tools-sandbox/tools_sandbox_demo.py`
+- `cases/speedrun-deer-flow/unit-5-tools-sandbox/tools_sandbox_demo.py`
 
 对应原仓文件：
 
+- `src/deer-flow/backend/packages/harness/deerflow/agents/lead_agent/agent.py`
+- `src/deer-flow/backend/packages/harness/deerflow/models/factory.py`
+- `src/deer-flow/backend/packages/harness/deerflow/config/paths.py`
 - `src/deer-flow/backend/packages/harness/deerflow/tools/tools.py`
+- `src/deer-flow/backend/packages/harness/deerflow/sandbox/tools.py`
 - `src/deer-flow/backend/packages/harness/deerflow/tools/builtins/__init__.py`
 - `src/deer-flow/backend/packages/harness/deerflow/tools/builtins/task_tool.py`
 - `src/deer-flow/backend/packages/harness/deerflow/sandbox/__init__.py`
@@ -173,22 +179,29 @@ speedrun 保留的概念：
 speedrun 保留的概念：
 
 - tool list 由 config + builtin + subagent + vision + MCP 拼出来
-- local sandbox 暴露最小命令执行和文件 IO 接口
+- LangGraph agent loop 由 `model -> tools -> model` 组成
+- OpenAI-compatible LLM 配置就是 `model/base_url/api_key`
+- Docker sandbox 是模型 tool call 和真实命令执行之间的边界
+- `/mnt/user-data/...` virtual path 会映射到每个 thread 的 host `user-data/` 目录
 
 回到原仓要补的真实复杂度：
 
+- `create_agent(...)`、middleware、state schema、checkpointer 和 streaming
+- `create_chat_model(...)` 对 thinking、reasoning effort、provider patch 的处理
 - `resolve_variable(...)` 的动态加载
 - MCP cache、deferred registry、tool search 的联动
-- Docker/provisioner sandbox provider
+- sandbox provider 的 acquire/release、复用、Docker/provisioner 生命周期
+- `sandbox/tools.py` 里 host path、virtual path、skills path、错误脱敏的完整处理
 - task tool 与 subagent executor 的后台执行链路
 
 建议先读：
 
-1. `tools/tools.py`
-2. `tools/builtins/__init__.py`
-3. `sandbox/local/local_sandbox.py`
-4. `sandbox/local/local_sandbox_provider.py`
-5. `community/aio_sandbox/`
+1. `agents/lead_agent/agent.py`
+2. `models/factory.py`
+3. `config/paths.py`
+4. `sandbox/tools.py`
+5. `tools/tools.py`
+6. `community/aio_sandbox/`
 
 ## Read With Commands
 
@@ -219,7 +232,7 @@ rg -n "make_lead_agent|_build_middlewares|create_agent|apply_prompt_template" pa
 按 tools 和 sandbox 主线搜：
 
 ```bash
-rg -n "get_available_tools|task_tool|view_image_tool|get_sandbox_provider|LocalSandbox" packages/harness/deerflow
+rg -n "get_available_tools|task_tool|view_image_tool|create_chat_model|get_sandbox_provider|LocalSandbox|AioSandbox" packages/harness/deerflow
 ```
 
 ## What To Read Later
