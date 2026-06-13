@@ -4,9 +4,9 @@
 
 ## In Plain Language
 
-Agent 不是一个大函数。更准确地说，它是一圈循环：模型先决定要不要调用工具，工具把真实世界的结果带回来，模型再根据结果继续回答。DeerFlow 用 LangGraph 管这圈循环，用 sandbox 管“碰文件、跑命令”这件危险的事。
+Agent 不是一个大函数。更准确地说，它是一圈循环：模型先决定要不要调用工具，工具从 runtime 里拿到 sandbox 和 thread data，再把真实世界的结果带回来，模型再根据结果继续回答。DeerFlow 用 LangGraph 管这圈循环，用 sandbox 管“碰文件、跑命令”这件危险的事。
 
-这个单元把 DeerFlow 的真实形状压缩成一个教学版：LangGraph 里有 `model` 和 `tools` 两个节点，模型可以请求 `bash/read_file/write_file`，工具节点把请求交给 sandbox。Docker sandbox 会把 host 的 `user-data/` 挂到容器里的 `/mnt/user-data`，所以模型看到的 virtual path 和宿主机上的真实文件是同一份数据。默认运行用可预测的 scripted model；`--live` 模式会接 OpenAI-compatible LLM，并用 Docker 跑命令。
+这个单元把 DeerFlow 的真实形状压缩成一个教学版：LangGraph 里有 `model` 和 `tools` 两个节点，模型可以请求 `bash/read_file/write_file`，工具节点先经过 teaching runtime/provider，再交给 sandbox。Docker sandbox 会把 host 的 `user-data/` 挂到容器里的 `/mnt/user-data`；local sandbox 则在 tool 层把 `/mnt/user-data/...` 解析成当前 thread 的 host path。默认运行用可预测的 scripted model；`--live` 模式会接 OpenAI-compatible LLM，并用 Docker 跑命令。
 
 ## Background Knowledge
 
@@ -14,6 +14,7 @@ Agent 不是一个大函数。更准确地说，它是一圈循环：模型先�
 - **Tool call 是一张工单**：模型不会直接执行命令，只返回工具名和参数。
 - **Docker sandbox 是执行边界**：教学版把 `bash` 转成 `docker run --rm -v <host-user-data>:/mnt/user-data -w /mnt/user-data/workspace ... /bin/sh -lc <command>`。
 - **virtual path 是模型的唯一文件语言**：`read_file/write_file` 只接受 `/mnt/user-data/...`，不接受 host 绝对路径。
+- **Tool runtime 是中转站**：工具不是直接 new sandbox，而是从 runtime state 取 `sandbox_id`、`thread_data`，必要时由 provider acquire。
 - **OpenAI-compatible 接口是配置形状**：同样用 `ChatOpenAI`，但通过 `base_url/api_key/model` 指向不同服务。
 
 ## Key Terminology
@@ -30,7 +31,12 @@ Agent 不是一个大函数。更准确地说，它是一圈循环：模型先�
 
 1. 继续展示 DeerFlow 式工具列表如何从 config、builtin、subagent、vision、MCP 拼出来
 2. 用 LangGraph 实现一个最小 agent loop：模型节点、工具节点、条件边
-3. 提供 live 模式：OpenAI-compatible LLM 决定工具调用，Docker sandbox 通过 `/mnt/user-data` 执行任务
+3. 让工具调用走 runtime/provider/path validation，而不是直接调 sandbox
+4. 提供 live 模式：OpenAI-compatible LLM 决定工具调用，Docker sandbox 通过 `/mnt/user-data` 执行任务
+
+这里的 MCP 只说明“外部工具会被算进工具来源”。MCP server config、mtime cache、deferred registry 和 `tool_search` 的完整流程在 `Unit 9` 单独展开。
+
+如果你想把真实环境里的上传、runtime、sandbox、tool call 和 artifact 返回完整串起来，先读 [REAL-SANDBOX-FLOW.md](/root/key_projects/learn-codebase/cases/speedrun-deer-flow/unit-5-tools-sandbox/REAL-SANDBOX-FLOW.md)。
 
 对应真实源码：
 
@@ -43,11 +49,13 @@ Agent 不是一个大函数。更准确地说，它是一圈循环：模型先�
 
 - `tools_sandbox_demo.py:30`：`OpenAICompatibleConfig` 展示真实 DeerFlow model factory 的关键配置形状。
 - `tools_sandbox_demo.py:147`：`DockerSandbox.execute_command()` 把普通 shell 命令包成挂载 `/mnt/user-data` 的 `docker run`。
-- `tools_sandbox_demo.py:166-185`：`read_file/write_file` 通过 virtual path 映射到 host `user-data/`，并拒绝路径逃逸。
+- `tools_sandbox_demo.py:260`：`build_tool_runtime()` 构造 thread data、sandbox state 和 provider，模拟真实 `ToolRuntime`。
 - `tools_sandbox_demo.py:228`：`ScriptedToolCallingModel` 是离线教学模型，固定先发工具调用再给最终回答。
 - `tools_sandbox_demo.py:267`：`run_langgraph_sandbox_demo()` 构建 `model` 和 `tools` 两个 LangGraph 节点。
-- `tools_sandbox_demo.py:283`：`call_tools()` 把模型的 tool call 派发给 sandbox，再生成 `ToolMessage`。
+- `tools_sandbox_demo.py:283`：`call_tools()` 把模型的 tool call 派发到 runtime tool 层，再生成 `ToolMessage`。
 - `tools_sandbox_demo.py:307`：条件边决定继续去工具节点，还是结束。
+- `tools_sandbox_demo.py:430`：`read_file_runtime_tool()` 展示 local 模式如何校验并解析 `/mnt/user-data`。
+- `tools_sandbox_demo.py:455`：`write_file_runtime_tool()` 展示写文件前的边界检查。
 
 ## How to Run
 
@@ -156,6 +164,7 @@ Verify: `sandbox.virtual_to_host(...)` 能返回 host `user-data` 下的路径
 - 用 `python -m pdb unit-5-tools-sandbox/main.py`
 - 在 `tools_sandbox_demo.py:280` 后检查模型返回的 `AIMessage`
 - 在 `tools_sandbox_demo.py:296` 后检查 `ToolMessage`
+- 在 `tools_sandbox_demo.py:430` 后检查 `requested_path` 和解析后的 host path
 - live 模式结束后看 `unit-5-tools-sandbox/_demo_data/docker-thread/user-data/`
 
 ### Isolation Testing

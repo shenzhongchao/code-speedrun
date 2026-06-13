@@ -1,0 +1,1 @@
+Artifact notes are plain text and should be returned as text content.

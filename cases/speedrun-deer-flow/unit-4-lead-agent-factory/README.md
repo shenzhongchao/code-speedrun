@@ -29,12 +29,14 @@ DeerFlow 的 lead agent 不是“选一个模型然后直接开跑”。它更�
 4. 把可用工具和运行时状态交给 agent 执行
 
 你可以把它当成 DeerFlow agent 装配流程的教学版 X 光图。
+扩展后，skills 和 memory section 不再是纯占位名称，而是读取 Unit 6/7 的 public API 生成摘要；subagent section 仍只展示启用状态，完整后台执行交给 Unit 8。
 
 ## Key Code Walkthrough
 
 - `lead_agent_factory_demo.py:7-13`：`RuntimeFlags` 把最关键的运行时开关收拢到一个 dataclass 里，模拟原仓库 `configurable` 里的那几个核心参数。
 - `lead_agent_factory_demo.py:20-60`：`DemoLeadAgent.run()` 不做空讲解，而是真实写出 `brief.md`、再读回内容、最后列目录。这让 agent 看起来像真的在“做事”。
 - `lead_agent_factory_demo.py:73-88`：`create()` 是装配核心。它先 resolve model，再算 thinking 和 reasoning，再收集中间件、prompt section、工具列表。
+- `lead_agent_factory_demo.py:132-153`：prompt section 摘要来自 Unit 6 的 skills prompt 和 Unit 7 的 memory context，避免 Unit 4 复制完整 secondary flow。
 - `lead_agent_factory_demo.py:99-106`：模型解析逻辑故意保留“请求模型不存在时回退默认模型”的行为，这和原仓库的 `_resolve_model_name()` 一致。
 - `lead_agent_factory_demo.py:108-130`：middleware 的增减完全由 flags 和模型能力驱动，这就是为什么 DeerFlow 没把中间件写死成一个常量列表。
 
@@ -52,6 +54,7 @@ python unit-4-lead-agent-factory/main.py
 - `model_name` 是 `gpt-5-responses`
 - `middlewares` 里包含 `TodoMiddleware`、`ViewImageMiddleware`、`SubagentLimitMiddleware`
 - `tool_trace` 里出现 `write_file`、`read_file`、`bash`
+- `prompt_sections` 里 `skills prompt` 有 enabled skill count，`subagent prompt` 反映当前 flag
 
 ## Exercises
 

@@ -52,6 +52,46 @@
       "envFile": "${workspaceFolder}/.env"
     },
     {
+      "name": "Unit 6: Skills Prompt System",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-6-skills-prompt-system/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 7: Memory Lifecycle",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-7-memory-lifecycle/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 8: Subagent Delegation",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-8-subagent-delegation/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 9: MCP Deferred Tools",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-9-mcp-deferred-tools/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Unit 10: Artifacts and Archive Safety",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/unit-10-artifacts-archive-safety/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Run Current File",
       "type": "debugpy",
       "request": "launch",

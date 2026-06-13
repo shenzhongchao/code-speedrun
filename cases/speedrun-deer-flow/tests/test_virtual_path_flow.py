@@ -129,3 +129,31 @@ def test_unit1_shows_upload_runtime_and_sandbox_share_virtual_paths():
     assert result["uploaded_files"][0]["virtual_path"].startswith("/mnt/user-data/uploads/")
     assert result["virtual_path_flow"]["output_virtual_path"] == "/mnt/user-data/outputs/langgraph-result.txt"
     assert result["virtual_path_flow"]["host_output_exists"] is True
+
+
+def test_unit1_imports_secondary_flows_as_summaries():
+    unit1 = load_module("unit1_overall_backend_flow_with_secondary", "unit-1-overall-backend-flow/main.py")
+
+    result = unit1.run_demo()
+
+    secondary = result["secondary_flows"]
+    assert secondary["skills_prompt"]["enabled_count"] >= 1
+    assert secondary["memory_context"]["has_section"] is True
+    assert secondary["subagent_events"] == ["task_started", "task_running", "task_completed"]
+    assert "tool_search" in secondary["mcp_deferred_tools"]["visible_tools"]
+    assert secondary["artifact_safety"]["virtual_path"] == "/mnt/user-data/outputs/langgraph-result.txt"
+
+
+def test_unit4_prompt_sections_use_unit6_and_unit7_summaries():
+    unit2 = load_module("unit2_gateway_config_demo_for_unit4", "unit-2-gateway-config/gateway_config_demo.py")
+    unit4 = load_module("unit4_lead_agent_factory_demo", "unit-4-lead-agent-factory/lead_agent_factory_demo.py")
+
+    agent = unit4.LeadAgentFactory(unit2.build_demo_config().models).create(
+        unit4.RuntimeFlags(subagent_enabled=True),
+        available_tools=[],
+    )
+
+    sections = {section["name"]: section for section in agent.blueprint["prompt_sections"]}
+    assert sections["skills prompt"]["enabled_skill_count"] >= 1
+    assert sections["memory prompt"]["enabled"] in {True, False}
+    assert sections["subagent prompt"]["enabled"] is True

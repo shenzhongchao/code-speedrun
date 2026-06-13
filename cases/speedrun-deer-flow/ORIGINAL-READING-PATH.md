@@ -3,12 +3,13 @@
 这份文档的目标不是“再讲一遍 speedrun”，而是把你从教学版代码平稳送回 DeerFlow 真源码。建议顺序是：
 
 1. 先跑 `Unit 1`
-2. 然后按 `Unit 2 -> Unit 3 -> Unit 4 -> Unit 5` 回看真实源码
-3. 最后再决定要不要进入前端、Docker、测试或 IM channels
+2. 然后按 `Unit 2 -> Unit 3 -> Unit 4 -> Unit 5` 回看 backend 主链路
+3. 再按 `Unit 6 -> Unit 7 -> Unit 8 -> Unit 9 -> Unit 10` 回看 secondary flows
+4. 最后再决定要不要进入前端、Docker、测试或 IM channels
 
 ## 90-Minute Route
 
-如果你只想用最少时间建立源码地图，按这个顺序看：
+如果你只想用最少时间建立主链路源码地图，按这个顺序看：
 
 1. `backend/app/gateway/app.py`
 2. `backend/app/gateway/routers/models.py`
@@ -24,6 +25,25 @@
 12. `backend/packages/harness/deerflow/models/factory.py`
 13. `backend/packages/harness/deerflow/sandbox/local/local_sandbox.py`
 14. `backend/packages/harness/deerflow/community/aio_sandbox/`
+## 180-Minute Route
+
+如果你要补齐 super-agent secondary flows，在 90 分钟路线之后继续看：
+
+1. `backend/packages/harness/deerflow/skills/loader.py`
+2. `backend/packages/harness/deerflow/skills/parser.py`
+3. `backend/app/gateway/routers/skills.py`
+4. `backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py`
+5. `backend/packages/harness/deerflow/agents/memory/queue.py`
+6. `backend/packages/harness/deerflow/agents/memory/updater.py`
+7. `backend/packages/harness/deerflow/tools/builtins/task_tool.py`
+8. `backend/packages/harness/deerflow/subagents/executor.py`
+9. `backend/packages/harness/deerflow/subagents/config.py`
+10. `backend/packages/harness/deerflow/mcp/cache.py`
+11. `backend/packages/harness/deerflow/mcp/tools.py`
+12. `backend/packages/harness/deerflow/mcp/client.py`
+13. `backend/packages/harness/deerflow/tools/builtins/tool_search.py`
+14. `backend/app/gateway/routers/artifacts.py`
+15. `backend/app/gateway/path_utils.py`
 
 ## Unit Crosswalk
 
@@ -47,6 +67,7 @@
 - gateway 和 LangGraph server 是分开的进程边界
 - thread data 和 sandbox 来自 middleware，不是主脚本直接 new
 - prompt、memory、skills、MCP cache 都在 agent 创建时动态拼接
+- secondary flows 是独立机制，但 Unit 1 只展示它们的摘要，避免掩盖主链路
 
 建议阅读问题：
 
@@ -203,6 +224,96 @@ speedrun 保留的概念：
 5. `tools/tools.py`
 6. `community/aio_sandbox/`
 
+### Unit 6: Skills Prompt System
+
+教学版入口：
+
+- `cases/speedrun-deer-flow/unit-6-skills-prompt-system/skills_prompt_demo.py`
+
+对应原仓文件：
+
+- `src/deer-flow/backend/packages/harness/deerflow/skills/loader.py`
+- `src/deer-flow/backend/packages/harness/deerflow/skills/parser.py`
+- `src/deer-flow/backend/app/gateway/routers/skills.py`
+- `src/deer-flow/backend/packages/harness/deerflow/agents/lead_agent/prompt.py`
+
+建议阅读问题：
+
+- 为什么 prompt 里只放 skill 索引，而不是完整 `SKILL.md`？
+- 为什么 enabled state 要从文件重新读？
+
+### Unit 7: Memory Lifecycle
+
+教学版入口：
+
+- `cases/speedrun-deer-flow/unit-7-memory-lifecycle/memory_lifecycle_demo.py`
+
+对应原仓文件：
+
+- `src/deer-flow/backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py`
+- `src/deer-flow/backend/packages/harness/deerflow/agents/memory/queue.py`
+- `src/deer-flow/backend/packages/harness/deerflow/agents/memory/updater.py`
+- `src/deer-flow/backend/packages/harness/deerflow/agents/memory/prompt.py`
+
+建议阅读问题：
+
+- 为什么 tool results 不进入长期记忆？
+- 为什么 `/mnt/user-data/uploads/...` 不能持久化？
+
+### Unit 8: Subagent Delegation
+
+教学版入口：
+
+- `cases/speedrun-deer-flow/unit-8-subagent-delegation/subagent_delegation_demo.py`
+
+对应原仓文件：
+
+- `src/deer-flow/backend/packages/harness/deerflow/tools/builtins/task_tool.py`
+- `src/deer-flow/backend/packages/harness/deerflow/subagents/executor.py`
+- `src/deer-flow/backend/packages/harness/deerflow/subagents/config.py`
+- `src/deer-flow/backend/packages/harness/deerflow/agents/middlewares/subagent_limit_middleware.py`
+
+建议阅读问题：
+
+- 为什么 subagent 共享 thread/sandbox，却不共享完整父上下文？
+- 为什么 subagent tool list 里不能再包含 `task`？
+
+### Unit 9: MCP Deferred Tools
+
+教学版入口：
+
+- `cases/speedrun-deer-flow/unit-9-mcp-deferred-tools/mcp_deferred_tools_demo.py`
+
+对应原仓文件：
+
+- `src/deer-flow/backend/packages/harness/deerflow/mcp/cache.py`
+- `src/deer-flow/backend/packages/harness/deerflow/mcp/tools.py`
+- `src/deer-flow/backend/packages/harness/deerflow/mcp/client.py`
+- `src/deer-flow/backend/app/gateway/routers/mcp.py`
+- `src/deer-flow/backend/packages/harness/deerflow/tools/builtins/tool_search.py`
+
+建议阅读问题：
+
+- 为什么 MCP config 变化靠 mtime 判断？
+- 为什么大量外部工具要放进 deferred registry？
+
+### Unit 10: Artifacts and Archive Safety
+
+教学版入口：
+
+- `cases/speedrun-deer-flow/unit-10-artifacts-archive-safety/artifacts_archive_safety_demo.py`
+
+对应原仓文件：
+
+- `src/deer-flow/backend/app/gateway/routers/artifacts.py`
+- `src/deer-flow/backend/app/gateway/routers/skills.py`
+- `src/deer-flow/backend/app/gateway/path_utils.py`
+
+建议阅读问题：
+
+- artifact endpoint 为什么只能解析 thread-scoped virtual path？
+- 为什么 ZIP 内部路径也要做 traversal、symlink 和大小检查？
+
 ## Read With Commands
 
 从仓库根目录运行：
@@ -235,6 +346,12 @@ rg -n "make_lead_agent|_build_middlewares|create_agent|apply_prompt_template" pa
 rg -n "get_available_tools|task_tool|view_image_tool|create_chat_model|get_sandbox_provider|LocalSandbox|AioSandbox" packages/harness/deerflow
 ```
 
+按 secondary flows 搜：
+
+```bash
+rg -n "load_skills|get_skills_prompt_section|_filter_messages_for_memory|SubagentExecutor|DeferredToolRegistry|resolve_thread_virtual_path|_safe_extract_skill_archive" app packages
+```
+
 ## What To Read Later
 
 先不要急着跳到这些区域，除非你已经把上面的四条主线看顺了：
@@ -244,6 +361,16 @@ rg -n "get_available_tools|task_tool|view_image_tool|create_chat_model|get_sandb
 - `backend/tests/`：适合用来检验你是否真的理解了边界，而不是拿来当第一份文档
 - `app/channels/`：是额外接入层，不是 DeerFlow 后端主线的起点
 
+## When To Read Frontend
+
+这个 speedrun 不拆 `frontend/`，但有三类 UI 入口值得在后端主线读顺后再看：
+
+- artifacts：前端如何打开、下载和预览 `/api/threads/{thread_id}/artifacts/...`
+- skills：前端如何列出、启停和安装 skills
+- memory：前端如何展示或触发长期记忆相关设置
+
+建议等你理解 Unit 6、Unit 7 和 Unit 10 之后再读这些界面入口。否则很容易把 UI 状态管理误认为 DeerFlow 的核心 agent runtime。
+
 ## Exit Criteria
 
 读完这份路线后，你应该能回答这四个问题：
@@ -252,3 +379,4 @@ rg -n "get_available_tools|task_tool|view_image_tool|create_chat_model|get_sandb
 2. 一个 `thread_id` 最终怎样变成 `workspace / uploads / outputs`？
 3. `make_lead_agent()` 真正装配了哪些东西？
 4. 为什么工具执行一定要经过 sandbox，而不是直接让模型碰宿主机？
+5. 为什么 skills、memory、subagent、MCP deferred tools 和 artifact safety 是 DeerFlow super-agent harness 的二级主线？

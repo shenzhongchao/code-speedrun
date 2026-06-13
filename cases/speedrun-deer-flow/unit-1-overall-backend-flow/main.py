@@ -14,9 +14,19 @@ sys.path.insert(0, str(ROOT_DIR / "unit-2-gateway-config"))
 sys.path.insert(0, str(ROOT_DIR / "unit-3-thread-runtime"))
 sys.path.insert(0, str(ROOT_DIR / "unit-4-lead-agent-factory"))
 sys.path.insert(0, str(ROOT_DIR / "unit-5-tools-sandbox"))
+sys.path.insert(0, str(ROOT_DIR / "unit-6-skills-prompt-system"))
+sys.path.insert(0, str(ROOT_DIR / "unit-7-memory-lifecycle"))
+sys.path.insert(0, str(ROOT_DIR / "unit-8-subagent-delegation"))
+sys.path.insert(0, str(ROOT_DIR / "unit-9-mcp-deferred-tools"))
+sys.path.insert(0, str(ROOT_DIR / "unit-10-artifacts-archive-safety"))
 
+from artifacts_archive_safety_demo import resolve_demo_artifact  # noqa: E402
 from gateway_config_demo import GatewayAPI, UploadedFile, build_demo_config  # noqa: E402
 from lead_agent_factory_demo import LeadAgentFactory, RuntimeFlags  # noqa: E402
+from mcp_deferred_tools_demo import run_mcp_deferred_tools_demo  # noqa: E402
+from memory_lifecycle_demo import build_memory_context, run_memory_lifecycle  # noqa: E402
+from skills_prompt_demo import build_skills_prompt_section  # noqa: E402
+from subagent_delegation_demo import run_subagent_demo  # noqa: E402
 from thread_runtime_demo import ThreadRuntimeManager  # noqa: E402
 from tools_sandbox_demo import (  # noqa: E402
     CompletedSandboxProcess,
@@ -128,6 +138,16 @@ def run_demo() -> dict[str, object]:
 
     output_virtual_path = f"{thread_runtime.virtual_outputs_path}/langgraph-result.txt"
     output_host_path = thread_runtime.mapper().virtual_to_host(output_virtual_path)
+    memory_path = base_dir / "memory.json"
+    memory_result = run_memory_lifecycle(memory_path=memory_path)
+    subagent_result = run_subagent_demo(base_dir=base_dir)
+    mcp_result = run_mcp_deferred_tools_demo(config_path=base_dir / "extensions_config.json")
+    artifact_result = resolve_demo_artifact(
+        thread_id=thread_runtime.thread_id,
+        virtual_path=output_virtual_path,
+        threads_root=base_dir / "threads",
+    )
+    skills_prompt = build_skills_prompt_section()
 
     return {
         "health": gateway.get_health(),
@@ -151,6 +171,27 @@ def run_demo() -> dict[str, object]:
             "output_host_path": str(output_host_path),
             "host_output_exists": output_host_path.exists(),
             "langgraph_agent": graph_outcome,
+        },
+        "secondary_flows": {
+            "skills_prompt": {
+                "enabled_count": skills_prompt.count("/mnt/skills/"),
+                "has_section": bool(skills_prompt),
+            },
+            "memory_context": {
+                "has_section": bool(build_memory_context(memory_path=memory_path)),
+                "filtered_message_count": len(memory_result["filtered_messages"]),
+            },
+            "subagent_events": [event["type"] for event in subagent_result["events"]],
+            "mcp_deferred_tools": {
+                "visible_tools": mcp_result["visible_tools"],
+                "deferred_tool_count": len(mcp_result["deferred_tools"]),
+                "search_results": [tool["name"] for tool in mcp_result["search_results"]],
+            },
+            "artifact_safety": {
+                "response_kind": artifact_result["response_kind"],
+                "virtual_path": artifact_result["virtual_path"],
+                "host_path": artifact_result["host_path"],
+            },
         },
     }
 

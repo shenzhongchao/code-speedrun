@@ -1,10 +1,10 @@
 # Unit 1: Overall Backend Flow
 
-> **Motto**: *One request, five moving parts*
+> **Motto**: *One request, ten moving parts*
 
 ## In Plain Language
 
-把 DeerFlow backend 想成一条小流水线：gateway 先接住请求，thread runtime 给这次对话分配自己的文件夹和 `/mnt/user-data/...` 虚拟路径，lead agent 再决定该带哪些中间件和工具，最后 sandbox 真正去动文件和命令。这个单元做的就是把这条流水线缩成一个能跑的脚本。
+把 DeerFlow backend 想成一条小流水线：gateway 先接住请求，thread runtime 给这次对话分配自己的文件夹和 `/mnt/user-data/...` 虚拟路径，lead agent 再决定该带哪些中间件和工具，最后 sandbox 真正去动文件和命令。这个单元还会压缩展示 skills、memory、subagent、MCP deferred tools 和 artifact safety 这五条 secondary flows。
 
 ## Background Knowledge
 
@@ -22,7 +22,7 @@
 
 ## What This Unit Does
 
-这个单元把 `Unit 2` 到 `Unit 5` 真实 import 进来，然后跑一条最短但完整的主链路：
+这个单元把 `Unit 2` 到 `Unit 10` 真实 import 进来，然后跑一条最短但完整的主链路：
 
 1. 用 `GatewayAPI` 列模型并上传两个文件。
 2. 用 `ThreadRuntimeManager` 为 `thread-007` 分配路径和 `sandbox_id`。
@@ -30,6 +30,7 @@
 4. 用 `LeadAgentFactory` 造一个 lead agent。
 5. 让 agent 通过 sandbox 写出 `/mnt/user-data/workspace/brief.md`，再读回来并列目录。
 6. 用 LangGraph 教学 agent 写 `/mnt/user-data/outputs/langgraph-result.txt`，并证明 host 侧输出文件存在。
+7. 返回一个 `secondary_flows` 摘要，展示 skills prompt、memory context、subagent events、MCP deferred tools 和 artifact safety。
 
 如果你先把这里吃透，再看原仓库，就不会被多进程部署、LangGraph server 和前端细节淹没。
 
@@ -67,9 +68,11 @@ python unit-1-overall-backend-flow/main.py
 - `lead_agent.middlewares`
 - `lead_agent.tool_trace`
 - `virtual_path_flow`
+- `secondary_flows`
 
 最关键的成功信号是 `lead_agent.tool_trace` 里出现 `write_file`、`read_file`、`bash` 三步，而且 `bash` 的输出里能看到 `brief.md`。
 另一个成功信号是 `virtual_path_flow.output_virtual_path` 是 `/mnt/user-data/outputs/langgraph-result.txt`，并且 `host_output_exists` 是 `true`。
+`secondary_flows` 应该包含 `skills_prompt`、`memory_context`、`subagent_events`、`mcp_deferred_tools` 和 `artifact_safety`。
 
 ## Exercises
 

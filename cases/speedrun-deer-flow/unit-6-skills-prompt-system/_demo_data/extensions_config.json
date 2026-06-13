@@ -1,0 +1,10 @@
+{
+  "skills": {
+    "public:research": {
+      "enabled": true
+    },
+    "custom:charting": {
+      "enabled": false
+    }
+  }
+}

@@ -105,3 +105,113 @@ def test_openai_compatible_config_builds_chat_openai_kwargs():
         "api_key": "test-key",
         "temperature": 0,
     }
+
+
+def test_runtime_read_file_resolves_virtual_path_for_local_sandbox(tmp_path):
+    unit5 = load_unit5()
+    user_data = tmp_path / "thread-local" / "user-data"
+    (user_data / "uploads").mkdir(parents=True)
+    (user_data / "uploads" / "brief.md").write_text("local upload", encoding="utf-8")
+    sandbox = unit5.LocalSandbox("local")
+    runtime = unit5.build_tool_runtime(
+        thread_id="thread-local",
+        sandbox=sandbox,
+        user_data_root=user_data,
+        sandbox_mode="local",
+    )
+
+    result = unit5.dispatch_runtime_tool(
+        runtime,
+        "read_file",
+        {"path": "/mnt/user-data/uploads/brief.md"},
+    )
+
+    assert result == "local upload"
+
+
+def test_runtime_write_file_rejects_local_path_traversal(tmp_path):
+    unit5 = load_unit5()
+    runtime = unit5.build_tool_runtime(
+        thread_id="thread-local",
+        sandbox=unit5.LocalSandbox("local"),
+        user_data_root=tmp_path / "thread-local" / "user-data",
+        sandbox_mode="local",
+    )
+
+    result = unit5.dispatch_runtime_tool(
+        runtime,
+        "write_file",
+        {
+            "path": "/mnt/user-data/outputs/../secret.txt",
+            "content": "do not write",
+        },
+    )
+
+    assert result == "Error: Permission denied writing to file: /mnt/user-data/outputs/../secret.txt"
+    assert not (tmp_path / "thread-local" / "user-data" / "secret.txt").exists()
+
+
+def test_runtime_bash_rewrites_virtual_paths_for_local_sandbox(tmp_path):
+    unit5 = load_unit5()
+    user_data = tmp_path / "thread-local" / "user-data"
+    runtime = unit5.build_tool_runtime(
+        thread_id="thread-local",
+        sandbox=unit5.LocalSandbox("local"),
+        user_data_root=user_data,
+        sandbox_mode="local",
+    )
+
+    result = unit5.dispatch_runtime_tool(
+        runtime,
+        "bash",
+        {
+            "command": (
+                "printf 'LOCAL_OK\\n' "
+                "> /mnt/user-data/outputs/result.txt && "
+                "cat /mnt/user-data/outputs/result.txt"
+            )
+        },
+    )
+
+    assert result == "LOCAL_OK"
+    assert (user_data / "outputs" / "result.txt").read_text(encoding="utf-8") == "LOCAL_OK\n"
+
+
+def test_container_runtime_keeps_virtual_path_at_tool_layer(tmp_path):
+    unit5 = load_unit5()
+
+    class RecordingSandbox:
+        id = "container-recording"
+
+        def __init__(self):
+            self.writes = []
+
+        def execute_command(self, command: str) -> str:
+            return command
+
+        def read_file(self, path: str) -> str:
+            return f"read:{path}"
+
+        def write_file(self, path: str, content: str, append: bool = False) -> None:
+            self.writes.append((path, content, append))
+
+    sandbox = RecordingSandbox()
+    runtime = unit5.build_tool_runtime(
+        thread_id="thread-container",
+        sandbox=sandbox,
+        user_data_root=tmp_path / "thread-container" / "user-data",
+        sandbox_mode="container",
+    )
+
+    result = unit5.dispatch_runtime_tool(
+        runtime,
+        "write_file",
+        {
+            "path": "/mnt/user-data/outputs/result.txt",
+            "content": "container output",
+        },
+    )
+
+    assert result == "OK"
+    assert sandbox.writes == [("/mnt/user-data/outputs/result.txt", "container output", False)]
+

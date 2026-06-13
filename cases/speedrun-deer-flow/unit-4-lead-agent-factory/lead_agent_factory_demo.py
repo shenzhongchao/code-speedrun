@@ -2,6 +2,16 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from pathlib import Path
+import sys
+
+
+CURRENT_DIR = Path(__file__).resolve().parent
+ROOT_DIR = CURRENT_DIR.parent
+sys.path.insert(0, str(ROOT_DIR / "unit-6-skills-prompt-system"))
+sys.path.insert(0, str(ROOT_DIR / "unit-7-memory-lifecycle"))
+
+from memory_lifecycle_demo import build_memory_context  # noqa: E402
+from skills_prompt_demo import build_skills_prompt_section  # noqa: E402
 
 
 @dataclass
@@ -95,11 +105,7 @@ class LeadAgentFactory:
             "reasoning_effort": flags.reasoning_effort if thinking_enabled else None,
             "middlewares": self._build_middlewares(flags, getattr(model, "supports_vision", False)),
             "available_tools": [getattr(tool, "name", str(tool)) for tool in available_tools],
-            "prompt_sections": [
-                "base system prompt",
-                "skills prompt",
-                "memory prompt",
-            ],
+            "prompt_sections": self._build_prompt_sections(flags),
         }
         return DemoLeadAgent(blueprint)
 
@@ -149,3 +155,27 @@ class LeadAgentFactory:
             ]
         )
         return middlewares
+
+    @staticmethod
+    def _build_prompt_sections(flags: RuntimeFlags) -> list[dict[str, object]]:
+        skills_section = build_skills_prompt_section()
+        memory_section = build_memory_context()
+        sections: list[dict[str, object]] = [
+            {"name": "base system prompt", "enabled": True},
+            {
+                "name": "skills prompt",
+                "enabled": bool(skills_section),
+                "enabled_skill_count": skills_section.count("/mnt/skills/"),
+            },
+            {
+                "name": "memory prompt",
+                "enabled": bool(memory_section),
+                "line_count": len(memory_section.splitlines()) if memory_section else 0,
+            },
+            {
+                "name": "subagent prompt",
+                "enabled": flags.subagent_enabled,
+                "summary": "Unit 8 owns the full background delegation flow.",
+            },
+        ]
+        return sections
