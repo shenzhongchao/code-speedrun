@@ -82,6 +82,27 @@ Code Speedrun decomposed it into 7 runnable units:
 
 Each unit runs in seconds with `python unit-N-<slug>/main.py` — no GPU, no 50GB model weights, no database downloads. The generated `speedrun-Protenix/` also includes a [simplification checklist](Protenix/SIMPLIFICATIONS.md) mapping every shortcut back to the original source files, so you can progressively expand each unit toward the real implementation with AI coding tools.
 
+## Case Study: DeerFlow (Super Agent Harness)
+
+[DeerFlow](https://github.com/bytedance/deer-flow) is an open-source super agent harness — not a chatbot UI, not a single-turn agent demo, but a backend framework that orchestrates LLMs, tool calls, subagents, memory, sandboxes, and skills into a coherent runtime. Its backend (~Python/LangGraph) is the brain; the Next.js frontend is just the face.
+
+Code Speedrun decomposed the backend into 10 runnable units:
+
+| Unit | Topic | What You Learn |
+|------|-------|----------------|
+| 1 | Overall backend flow | Full request-to-response pipeline importing Units 2-10 |
+| 2 | Gateway & config | FastAPI boundary for models, uploads, and config-backed APIs |
+| 3 | Thread runtime | Per-thread host paths, `/mnt/user-data` virtual paths, sandbox assignment |
+| 4 | Lead agent factory | Resolve runtime flags into model, middleware, prompt, and tools |
+| 5 | Tools & Docker sandbox | LangGraph tool-calling loop + OpenAI-compatible LLM + sandbox execution |
+| 6 | Skills prompt system | Scan skills, apply enabled state, inject compact prompt index |
+| 7 | Memory lifecycle | Filter conversation, update memory JSON, inject next prompt context |
+| 8 | Subagent delegation | Background task execution with filtered tools and progress events |
+| 9 | MCP deferred tools | Config mtime cache, deferred registry, `tool_search` discovery |
+| 10 | Artifacts & archive safety | Thread-scoped artifact serving and safe `.skill` archive inspection |
+
+Unit 1 ties all 10 together with real imports, simulating one backend request and five secondary flow summaries. After running the speedrun, the included [reading path](cases/speedrun-deer-flow/ORIGINAL-READING-PATH.md) maps every unit back to the original DeerFlow source files — with 90-minute and 180-minute routes depending on how deep you want to go.
+
 ## License
 
 MIT

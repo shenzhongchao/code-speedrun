@@ -82,6 +82,27 @@ Code Speedrun 将其拆解为 7 个可运行的学习单元：
 
 每个单元用 `python unit-N-<slug>/main.py` 即可运行——不需要 GPU、不需要 50GB 模型权重、不需要下载数据库。生成的 `speedrun-Protenix/` 还包含一份[简化清单](Protenix/SIMPLIFICATIONS.md)，将每个简化点映射回原版源文件，方便借助 AI 编程工具逐步向原版扩展。
 
+## 案例：DeerFlow（Super Agent 编排框架）
+
+[DeerFlow](https://github.com/bytedance/deer-flow) 是一个开源的 super agent harness——不是聊天机器人 UI，也不是单轮问答 agent demo，而是一套把 LLM、工具调用、子代理、记忆、sandbox、skills 编排在一起的后端运行时。后端（Python/LangGraph）是大脑，Next.js 前端只是外表。
+
+Code Speedrun 将后端拆解为 10 个可运行的学习单元：
+
+| 单元 | 主题 | 学到什么 |
+|------|------|----------|
+| 1 | 后端主流程总览 | 用真实 import 串联 Unit 2-10，模拟一次完整请求 |
+| 2 | Gateway 与配置 | FastAPI 边界处理模型列表、文件上传和配置驱动的 API |
+| 3 | Thread 运行时 | 每个 thread 独立的主机路径、`/mnt/user-data` 虚拟路径和 sandbox 分配 |
+| 4 | Lead Agent 工厂 | 将运行时参数翻译成模型、中间件、提示词和工具选择 |
+| 5 | 工具与 Docker Sandbox | LangGraph 工具调用循环 + OpenAI 兼容 LLM + sandbox 执行 |
+| 6 | Skills 提示词系统 | 扫描 skills、应用启用状态、注入紧凑的提示词索引 |
+| 7 | Memory 生命周期 | 过滤对话、更新记忆 JSON、注入下一轮提示词上下文 |
+| 8 | Subagent 委派 | 后台任务执行，带上过滤后的工具集和进度事件 |
+| 9 | MCP 延迟工具 | 配置 mtime 缓存、延迟注册、`tool_search` 发现机制 |
+| 10 | Artifact 与归档安全 | 线程作用域内的 artifact 服务与安全的 `.skill` 归档检查 |
+
+Unit 1 用真实 import 串联全部 10 个单元，模拟一次后端请求和五条 secondary flow 摘要。跑完 speedrun 后，附带的[源码对照路径](cases/speedrun-deer-flow/ORIGINAL-READING-PATH.md)将每个单元映射回 DeerFlow 真实源文件——提供 90 分钟和 180 分钟两条路线，取决于你想挖多深。
+
 ## License
 
 MIT
